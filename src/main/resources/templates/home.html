@@ -5,7 +5,7 @@
     <title>PayPal Spring Boot Application</title>
 </head>
 <body>
-<p>Product COST: $7.99 USD <a href="/?action=add">+</a> <a href="/?action=sub">-</a> <a href="/?action=reset">Reset</a></p>
+<p>Product COST: $7.99 USD <a href="?action=add">+</a> <a href="?action=sub">-</a> <a href="?action=reset">Reset</a></p>
 <div class="cart" style="width: 400px;height: 400px;display: flex;justify-content: center;align-items: center;background-color: #888;flex-direction: column;">
     <div><span>Products in Shopping Cart:</span><span th:text="${count}"></span></div>
     <div><span>Price of Shopping Cart:</span><span th:text="${price}"></span></div>
