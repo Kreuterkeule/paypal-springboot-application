@@ -45,7 +45,6 @@ public class RestController {
             return "home";
         }
         if (action == null) {
-            model.addAttribute("path", context.getContextPath());
             model.addAttribute("price", cart.get_price());
             model.addAttribute("count", cart.get_count());
             return "home";
@@ -83,8 +82,8 @@ public class RestController {
                 orderData.getMethod(),
                 orderData.getIntent(),
                 orderData.getDescription(),
-                "http://localhost:" + serverPort + "/",
-                "http://localhost:" + serverPort + "/"
+                "http://localhost:" + serverPort + context.getContextPath() + "/",
+                "http://localhost:" + serverPort + context.getContextPath() + "/"
         );
         for (Links link : payment.getLinks()) {
             if (link.getRel().equals("approval_url")) {
