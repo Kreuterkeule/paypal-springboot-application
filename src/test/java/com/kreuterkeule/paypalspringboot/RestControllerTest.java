@@ -4,6 +4,7 @@ import com.paypal.base.rest.PayPalRESTException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.ui.Model;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +29,7 @@ public class RestControllerTest {
         // GET: /home
 
         expected = "home";
-        actual = controller.getROOT();
+        actual = controller.getROOT( "reset", null);
         assertEquals(expected, actual);
 
         // GET: /pay/success

@@ -5,17 +5,21 @@
     <title>PayPal Spring Boot Application</title>
 </head>
 <body>
+<p>Product COST: $7.99 USD <a href="/?action=add">+</a> <a href="/?action=sub">-</a> <a href="/?action=reset">Reset</a></p>
+<div class="cart" style="width: 400px;height: 400px;display: flex;justify-content: center;align-items: center;background-color: #888;flex-direction: column;">
+    <div><span>Products in Shopping Cart:</span><span th:text="${count}"></span></div>
+    <div><span>Price of Shopping Cart:</span><span th:text="${price}"></span></div>
+</div>
 <form th:action="@{/pay}" method="post">
-    <label for="price"></label>
-    <input type="text" id="price" name="price" placeholder="price">
+    <input type="hidden" name="price" th:value="${price}">
     <label for="currency"></label>
-    <input type="text" id="currency" name="currency" placeholder="currency">
+    <input type="hidden" id="currency" name="currency" th:value="USD">
     <label for="method"></label>
-    <input type="text" id="method" name="method" placeholder="method">
+    <input type="hidden" id="method" name="method" th:value="paypal">
     <label for="intent"></label>
-    <input type="text" id="intent" name="intent" placeholder="intent">
+    <input type="hidden" id="intent" name="intent" th:value="sale">
     <label for="description"></label>
-    <input type="text" id="description" name="description" placeholder="description">
+    <input type="text" id="description" name="description" style="width: 400px;" placeholder="you can add a description here (not required)">
 
     <input type="submit" value="Continue to checkout">
 </form>

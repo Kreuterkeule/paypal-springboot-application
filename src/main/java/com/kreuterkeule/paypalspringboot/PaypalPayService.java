@@ -28,7 +28,7 @@ public class PaypalPayService {
     ) throws PayPalRESTException {
         Amount amount = new Amount();
         amount.setCurrency(currency);
-        total = new BigDecimal(total).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        total = new BigDecimal(total).setScale(2, RoundingMode.CEILING).doubleValue();
         amount.setTotal(total.toString());
         System.out.println(amount.getTotal());
 
