@@ -27,6 +27,12 @@ public class RestController {
     public static final String CANCEL_URL = "pay/cancel";
 
     @Autowired
+    private Environment environment;
+
+    @Value("${server.port}")
+    private String serverPort;
+
+    @Autowired
     private ServletContext context;
     @Autowired
     private PaypalPayService service;
@@ -35,13 +41,7 @@ public class RestController {
     private ShoppingCartService cart;
 
     @Autowired
-    private Environment environment;
-
-    @Autowired
     private ServerProperties serverProperties;
-
-    @Value("${server.port}")
-    private int serverPort;
 
     @GetMapping("/")
     public String getROOT(@RequestParam(value = "action", required = false) String action, Model model) {
@@ -86,8 +86,8 @@ public class RestController {
                 orderData.getMethod(),
                 orderData.getIntent(),
                 orderData.getDescription(),
-                "http://localhost:" + serverProperties.getPort() + context.getContextPath() + "/" + CANCEL_URL,
-                "http://localhost:" + serverProperties.getPort() + context.getContextPath() + "/" + SUCCESS_URL
+                "http://localhost:" + serverPort + context.getContextPath() + "/" + CANCEL_URL,
+                "http://localhost:" + serverPort + context.getContextPath() + "/" + SUCCESS_URL
         );
         for (Links link : payment.getLinks()) {
             if (link.getRel().equals("approval_url")) {
