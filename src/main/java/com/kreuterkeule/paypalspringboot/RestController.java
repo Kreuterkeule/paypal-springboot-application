@@ -7,6 +7,7 @@ import com.paypal.base.rest.PayPalRESTException;
 import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -35,6 +36,9 @@ public class RestController {
 
     @Autowired
     private Environment environment;
+
+    @Autowired
+    private ServerProperties serverProperties;
 
     @Value("${server.port}")
     private int serverPort;
@@ -82,8 +86,8 @@ public class RestController {
                 orderData.getMethod(),
                 orderData.getIntent(),
                 orderData.getDescription(),
-                "http://localhost:" + serverPort + context.getContextPath() + "/",
-                "http://localhost:" + serverPort + context.getContextPath() + "/"
+                "http://localhost:" + serverProperties.getPort() + context.getContextPath() + "/" + CANCEL_URL,
+                "http://localhost:" + serverProperties.getPort() + context.getContextPath() + "/" + SUCCESS_URL
         );
         for (Links link : payment.getLinks()) {
             if (link.getRel().equals("approval_url")) {
