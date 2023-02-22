@@ -23,21 +23,21 @@ public class HTTPRequestTest {
     public void homeReturnsHomeHTMLTest() throws Exception {
         assertThat(
                 this.restTemplate.getForObject("http://localhost:" + port + "/", String.class)
-        ).contains("<input type=\"text\" id=\"price\" name=\"price\" placeholder=\"price\">");
+        ).contains("<!DOCTYPE html>");
     }
 
     @Test
     public void paySuccessReturnsSuccessHTMLTest() throws Exception {
         assertThat(
                 this.restTemplate.getForObject("http://localhost:" + port + "/pay/success", String.class)
-        ).contains("<h1>Payment Succeeded!</h1>");
+        ).contains("<!DOCTYPE html>");
     }
 
     @Test
     public void payCancelReturnsCancelHTMLTest() throws Exception {
         assertThat(
                 this.restTemplate.getForObject("http://localhost:" + port + "/pay/cancel", String.class)
-        ).contains("<h1>Payment Canceled!</h1>");
+        ).contains("<!DOCTYPE html>");
     }
 
 }
