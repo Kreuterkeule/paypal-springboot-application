@@ -4,6 +4,7 @@ package com.kreuterkeule.paypalspringboot;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
+import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -25,6 +26,8 @@ public class RestController {
     public static final String CANCEL_URL = "pay/cancel";
 
     @Autowired
+    private ServletContext context;
+    @Autowired
     private PaypalPayService service;
 
     @Autowired
@@ -42,6 +45,7 @@ public class RestController {
             return "home";
         }
         if (action == null) {
+            model.addAttribute("path", context.getContextPath());
             model.addAttribute("price", cart.get_price());
             model.addAttribute("count", cart.get_count());
             return "home";
