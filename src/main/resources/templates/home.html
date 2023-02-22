@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>PayPal Spring Boot Application</title>
+</head>
+<body>
+<form th:action="@{/pay}" method="post">
+    <label for="price"></label>
+    <input type="text" id="price" name="price" placeholder="price">
+    <label for="currency"></label>
+    <input type="text" id="currency" name="currency" placeholder="currency">
+    <label for="method"></label>
+    <input type="text" id="method" name="method" placeholder="method">
+    <label for="intent"></label>
+    <input type="text" id="intent" name="intent" placeholder="intent">
+    <label for="description"></label>
+    <input type="text" id="description" name="description" placeholder="description">
+
+    <input type="submit" value="Continue to checkout">
+</form>
+</body>
+</html>
