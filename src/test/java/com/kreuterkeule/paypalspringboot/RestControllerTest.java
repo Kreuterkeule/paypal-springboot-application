@@ -111,7 +111,6 @@ public class RestControllerTest {
             });
             expected = "Response code: 400\tError response";
             actual = exception.getMessage();
-            System.out.println(actual);
             assertTrue(actual.contains(expected));
         }
     }
