@@ -7,5 +7,7 @@ Example:
 server.port=8080
 
 paypal.mode=sandbox
-paypal.client.id=<clientId>
-paypal.client.secret=<clientSecret>
+
+paypal.client.id=clientId
+
+paypal.client.secret=clientSecret
