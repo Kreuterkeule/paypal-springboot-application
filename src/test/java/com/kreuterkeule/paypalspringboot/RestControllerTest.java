@@ -48,9 +48,6 @@ public class RestControllerTest {
 
         OrderFormData order = new OrderFormData(
                 1D,
-                "USD",
-                "paypal",
-                "sale",
                 "Testing RestContoller"
         );
 
@@ -70,48 +67,17 @@ public class RestControllerTest {
 
         ArrayList<OrderFormData> orders = new ArrayList<>();
 
-        orders.add(new OrderFormData(
+        OrderFormData order = new OrderFormData(
                 0D,
-                "USD",
-                "paypal",
-                "sale",
                 "Testing RestContoller"
-        ));
+        );
 
-        orders.add(new OrderFormData(
-                1D,
-                "notValid",
-                "paypal",
-                "sale",
-                "Testing RestContoller"
-        ));
-
-        orders.add(new OrderFormData(
-                1D,
-                "USD",
-                "notValid",
-                "sale",
-                "Testing RestContoller"
-        ));
-
-        orders.add(new OrderFormData(
-                1D,
-                "USD",
-                "paypal",
-                "notValid",
-                "Testing RestContoller"
-        ));
-
-        // Test each order
-
-        for ( OrderFormData order : orders ) {
-            Exception exception = assertThrows(PayPalRESTException.class, () -> {
-                _controller.postPay(order);
-            });
-            expected = "Response code: 400\tError response";
-            actual = exception.getMessage();
-            assertTrue(actual.contains(expected));
-        }
+        Exception exception = assertThrows(PayPalRESTException.class, () -> {
+            _controller.postPay(order);
+        });
+        expected = "Response code: 400\tError response";
+        actual = exception.getMessage();
+        assertTrue(actual.contains(expected));
     }
 
 }

@@ -90,9 +90,10 @@ public class RestController {
 
         Payment payment = _service.generatePayment(
                 orderData.getPrice(), // not from cart because tests would run into errors with empty cart
-                orderData.getCurrency(),
-                orderData.getMethod(),
-                orderData.getIntent(),
+                //orderData.getCurrency(),
+                "USD", // ISO CURRENCY CODE could be anything, but decided it to be USD feel free and change it f.e. EUR,CHE
+                "paypal",
+                "sale",
                 orderData.getDescription(),
 
                 //TODO: get actual server port not from application.properties
