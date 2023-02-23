@@ -16,29 +16,39 @@ public class ApplicationConfig {
 
     // Load PayPal values from application.properties
     @Value("${paypal.client.id}")
-    private String clientId;
+    private String _clientId;
+
     @Value("${paypal.client.secret}")
-    private String clientSecret;
+    private String _clientSecret;
+
     @Value("${paypal.mode}")
-    private String mode;
+    private String _mode;
 
     @Bean
     public Map<String, String> paypalSdkConfig() {
+
         Map<String, String> configMap = new HashMap<>();
-        configMap.put("mode", mode);
+        configMap.put("mode", _mode);
+
         return configMap;
+
     }
 
     @Bean
     public OAuthTokenCredential oAuthTokenCredential() {
-        return new OAuthTokenCredential(clientId, clientSecret, paypalSdkConfig());
+
+        return new OAuthTokenCredential(_clientId, _clientSecret, paypalSdkConfig());
+
     }
 
     @Bean
     public APIContext apiContext() throws PayPalRESTException {
+
         APIContext context = new APIContext(oAuthTokenCredential().getAccessToken());
         context.setConfigurationMap(paypalSdkConfig());
+
         return context;
+
     }
 
 }

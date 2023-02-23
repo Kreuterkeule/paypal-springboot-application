@@ -29,20 +29,27 @@ public class ShoppingCartService {
     }
 
     public void add_count() {
+
         _count++;
         reload_price();
-    }
 
-    private void reload_price() {
-        this._price = _count * 7.99f;
-        this._price = new BigDecimal(_price).setScale(2, RoundingMode.CEILING).floatValue();
     }
 
     public void sub_count() {
+
         if (_count - 1 < 0f) {
             return;
         }
+
         _count--;
         reload_price();
+
+    }
+
+    private void reload_price() {
+
+        this._price = _count * 7.99f;
+        this._price = new BigDecimal(_price).setScale(2, RoundingMode.CEILING).floatValue();
+
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 public class PaypalPayService {
 
     @Autowired
-    APIContext context;
+    APIContext apiContext;
 
     public Payment generatePayment(
             Double total,
@@ -26,11 +26,14 @@ public class PaypalPayService {
             String cancelUrl,
             String successUrl
     ) throws PayPalRESTException {
+
         Amount amount = new Amount();
         amount.setCurrency(currency);
+
+        // converting total (float) to double and rounding it to two decimals
         total = new BigDecimal(total).setScale(2, RoundingMode.CEILING).doubleValue();
+
         amount.setTotal(total.toString());
-        System.out.println(amount.getTotal());
 
         Transaction transaction = new Transaction();
         transaction.setDescription(description);
@@ -52,15 +55,17 @@ public class PaypalPayService {
         payment.setTransactions(transactionList);
         payment.setRedirectUrls(redirectUrls);
 
-        return payment.create(context);
+        return payment.create(apiContext);
     }
 
     public Payment executePayment(String paymentId, String payerId) throws PayPalRESTException {
+
         Payment payment = new Payment();
         payment.setId(paymentId);
         PaymentExecution paymentExecution = new PaymentExecution();
         paymentExecution.setPayerId(payerId);
-        return payment.execute(context, paymentExecution);
+
+        return payment.execute(apiContext, paymentExecution);
 
     }
 

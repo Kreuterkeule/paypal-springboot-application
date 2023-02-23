@@ -8,7 +8,6 @@ import jakarta.servlet.ServletContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,84 +25,103 @@ public class RestController {
     public static final String SUCCESS_URL = "pay/success";
     public static final String CANCEL_URL = "pay/cancel";
 
-    @Autowired
-    private Environment environment;
-
     @Value("${server.port}")
-    private String serverPort;
+    private String _serverPort;
 
     @Autowired
-    private ServletContext context;
+    private ServletContext _servletContext;
     @Autowired
-    private PaypalPayService service;
+    private PaypalPayService _service;
 
     @Autowired
-    private ShoppingCartService cart;
+    private ShoppingCartService _cart;
 
     @Autowired
-    private ServerProperties serverProperties;
+    private ServerProperties _serverProperties;
 
     @GetMapping("/")
     public String getROOT(@RequestParam(value = "action", required = false) String action, Model model) {
+
+        //for test cases
+
         if (model == null) {
+
             return "home";
+
         }
+
         if (action == null) {
-            model.addAttribute("price", cart.get_price());
-            model.addAttribute("count", cart.get_count());
+            model.addAttribute("price", _cart.get_price());
+            model.addAttribute("count", _cart.get_count());
+
             return "home";
         }
+
         switch (action) {
             case "add":
-                cart.add_count();
+                _cart.add_count();
                 break;
             case "sub":
-                cart.sub_count();
+                _cart.sub_count();
                 break;
             case "reset":
-                cart.set_count(0);
-                cart.set_price(0);
+                _cart.set_count(0);
+                _cart.set_price(0);
                 break;
             default:
                 break;
         }
-        model.addAttribute("price", cart.get_price());
-        model.addAttribute("count", cart.get_count());
+
+        model.addAttribute("price", _cart.get_price());
+        model.addAttribute("count", _cart.get_count());
+
         return "home";
     }
 
     @GetMapping("/error")
     public String getError() {
+
         return "error";
+
     }
 
     @PostMapping("/pay")
     public String postPay(@ModelAttribute("order") OrderFormData orderData) throws PayPalRESTException {
-        System.out.println("asdf:" + orderData.getPrice().getClass().getName());
-        Payment payment = service.generatePayment(
-                orderData.getPrice(),
+
+        Payment payment = _service.generatePayment(
+                orderData.getPrice(), // not from cart because tests would run into errors with empty cart
                 orderData.getCurrency(),
                 orderData.getMethod(),
                 orderData.getIntent(),
                 orderData.getDescription(),
-                "http://localhost:" + serverPort + context.getContextPath() + "/" + CANCEL_URL,
-                "http://localhost:" + serverPort + context.getContextPath() + "/" + SUCCESS_URL
+
+                //TODO: get actual server port not from application.properties
+
+                "http://localhost:" + _serverPort + _servletContext.getContextPath() + "/" + CANCEL_URL,
+                "http://localhost:" + _serverPort + _servletContext.getContextPath() + "/" + SUCCESS_URL
         );
+
         for (Links link : payment.getLinks()) {
             if (link.getRel().equals("approval_url")) {
                 return "redirect:" +  link.getHref();
             }
         }
+
         return "redirect:/";
+
     }
 
     @GetMapping(value = SUCCESS_URL)
     public String getPaySuccess() {
+
         return "success";
+
     }
 
     @GetMapping(value = CANCEL_URL)
     public String getPayCancel() {
+
         return "cancel";
+
     }
 }
