@@ -5,15 +5,24 @@ import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
 import jakarta.servlet.ServletContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import jakarta.servlet.http.Cookie;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 @Controller
 public class RestController {
@@ -28,27 +37,52 @@ public class RestController {
     @Value("${server.port}")
     private String _serverPort;
 
+    private HashMap<Object, ShoppingCartService> _shoppingCarts = new HashMap<Object, ShoppingCartService>();
+
     @Autowired
     private ServletContext _servletContext;
     @Autowired
     private PaypalPayService _service;
 
     @Autowired
-    private ShoppingCartService _cart;
-
-    @Autowired
     private ServerProperties _serverProperties;
 
     @GetMapping("/")
-    public String getROOT(@RequestParam(value = "action", required = false) String action, Model model) {
+    public String getROOT(@RequestParam(value = "action", required = false) String action, Model model, HttpServletResponse response, HttpServletRequest request) {
 
         //for test cases
 
-        if (model == null) {
+        if (request == null || response == null || model == null) {
 
             return "home";
 
         }
+
+        String sessionToken;
+
+        ShoppingCartService _cart;
+
+        HttpSession session = request.getSession(true);
+        if (session.getAttribute("sessionToken") == null) {
+            int leftLimit = 97; //letter 'a'
+            int rightLimit = 122; //letter 'z'
+            int targetTokenLength = 20;
+            Random random = new Random();
+            String generatedToken = random.ints(leftLimit,rightLimit + 1)
+                    .limit(targetTokenLength)
+                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                    .toString();
+            session.setAttribute("sessionToken", generatedToken);
+            System.out.println("New User '" + generatedToken + "' generated");
+            sessionToken = generatedToken;
+            _shoppingCarts.put(sessionToken, new ShoppingCartService());
+        } else {
+            System.out.println("User '" + session.getAttribute("sessionToken") + "' connected");
+            sessionToken = (String) session.getAttribute("sessionToken");
+        }
+
+        _cart = _shoppingCarts.get(sessionToken);
+
 
         if (action == null) {
             model.addAttribute("price", _cart.get_price());
@@ -125,4 +159,19 @@ public class RestController {
         return "cancel";
 
     }
+
+    // for checking cookies
+
+    @GetMapping("/all-cookies")
+    public String readAllCookies(HttpServletRequest request) {
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            return Arrays.stream(cookies)
+                    .map(c -> c.getName() + "=" + c.getValue()).collect(Collectors.joining(", "));
+        }
+
+        return "No cookies";
+    }
+
 }

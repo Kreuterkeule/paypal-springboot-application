@@ -27,7 +27,7 @@ public class RestControllerTest {
         // GET: /home
 
         expected = "home";
-        actual = _controller.getROOT( "reset", null);
+        actual = _controller.getROOT( "reset", null, null, null);
         assertEquals(expected, actual);
 
         // GET: /pay/success
