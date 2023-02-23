@@ -77,11 +77,12 @@ public class RestController {
                 }
             }
             session.setAttribute("sessionToken", generatedToken);
-            System.out.println("New User '" + generatedToken + "' generated");
+            String metaData = request.getRemoteAddr().toString() + ":" + request.getRemoteUser() + ":" + request.getRemoteHost() + ":" + request.getRemotePort();
+            System.out.println("New User '" + generatedToken + "' generated meta data:" + metaData);
             sessionToken = generatedToken;
             _shoppingCarts.put(sessionToken, new ShoppingCartService());
         } else { // sets up the session if there is one already
-            System.out.println("User '" + session.getAttribute("sessionToken") + "' connected");
+            System.out.println("User '" + session.getAttribute("sessionToken") + "' connected meta data:" + session.getAttribute("metaData"));
             sessionToken = (String) session.getAttribute("sessionToken");
         }
 
