@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 @Controller
@@ -37,8 +36,12 @@ public class RestController {
     @Value("${server.port}")
     private String _serverPort;
 
+    // List of carts important for sessions
+
     private HashMap<Object, ShoppingCartService> _shoppingCarts = new HashMap<Object, ShoppingCartService>();
 
+    @Autowired
+    private RandomTokenService _tokenService;
     @Autowired
     private ServletContext _servletContext;
     @Autowired
@@ -62,26 +65,27 @@ public class RestController {
 
         ShoppingCartService _cart;
 
-        HttpSession session = request.getSession(true);
-        if (session.getAttribute("sessionToken") == null) {
-            int leftLimit = 97; //letter 'a'
-            int rightLimit = 122; //letter 'z'
-            int targetTokenLength = 20;
-            Random random = new Random();
-            String generatedToken = random.ints(leftLimit,rightLimit + 1)
-                    .limit(targetTokenLength)
-                    .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                    .toString();
+        HttpSession session = request.getSession(true); // creates a session if there is none and returns the session
+
+        if (session.getAttribute("sessionToken") == null) { // generate new session if there is no session yet
+            boolean tokenNotUnique = true;
+            String generatedToken = "notVerified!";
+            while (tokenNotUnique) {
+                generatedToken = _tokenService.getRandomToken();
+                if (!_shoppingCarts.containsKey(generatedToken)) { // check if token is already taken
+                    tokenNotUnique = false;
+                }
+            }
             session.setAttribute("sessionToken", generatedToken);
             System.out.println("New User '" + generatedToken + "' generated");
             sessionToken = generatedToken;
             _shoppingCarts.put(sessionToken, new ShoppingCartService());
-        } else {
+        } else { // sets up the session if there is one already
             System.out.println("User '" + session.getAttribute("sessionToken") + "' connected");
             sessionToken = (String) session.getAttribute("sessionToken");
         }
 
-        _cart = _shoppingCarts.get(sessionToken);
+        _cart = _shoppingCarts.get(sessionToken); // gets the cart which corresponds to the current session
 
 
         if (action == null) {
